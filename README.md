@@ -1,3 +1,2 @@
-# KSR ExamOS Ultimate - Phase 2 Enterprise Base
-
-Upload all files to GitHub root. Keep modules/parser.js inside modules folder.
+# KSR ExamOS Ultimate - Phase 3
+Advanced Parser + Real Exam Engine base.
