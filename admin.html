@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="te"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KSR ExamOS Ultimate - Admin</title>
+<link rel="stylesheet" href="style.css?v=phase1">
+</head><body>
+<header class="hero"><div><h1>KSR ExamOS Ultimate</h1><p>Admin Portal • Enterprise Foundation</p></div><a class="hero-btn" href="index.html">Student</a></header>
+<main class="container">
+<section id="loginCard" class="card">
+<h2>Admin Login</h2>
+<label>Email</label><input id="adminEmail" placeholder="admin@example.com">
+<label>Password</label><input id="adminPassword" type="password" placeholder="password">
+<button class="primary" id="loginBtn">Login</button><p id="loginMsg"></p>
+<div class="note">Phase-1 demo mode: Firebase login fail ayina dashboard open avtundi.</div>
+</section>
+<section id="dashboard" class="hidden">
+<section class="card top"><div><h2>Super Admin Dashboard</h2><span class="badge">Phase-1 Foundation</span></div><button class="danger" id="logoutBtn">Logout</button></section>
+<section class="grid">
+<div class="card"><h2>1. Institute Management</h2>
+<label>Institute ID</label><input id="instituteId" placeholder="KSR001">
+<label>Institute Name</label><input id="instituteName" placeholder="KSR Academy">
+<label>Admin Email</label><input id="instituteAdminEmail" placeholder="admin@example.com">
+<button class="primary" id="saveInstituteBtn">Save Institute</button><button id="loadInstitutesBtn">Load Institutes</button><div id="institutesList"></div>
+</div>
+<div class="card"><h2>2. Exam Create</h2>
+<label>Institute ID</label><input id="examInstituteId" placeholder="KSR001">
+<label>Exam ID</label><input id="examId" placeholder="DSC001">
+<label>Exam Title</label><input id="examTitleInput" placeholder="DSC Grand Test">
+<label>Time Minutes</label><input id="examMinutes" type="number" value="60">
+<label>Questions Paste Area</label><textarea id="questionsText" placeholder="1. Question text&#10;A) Option&#10;B) Option ●&#10;C) Option&#10;D) Option"></textarea>
+<button class="primary" id="previewBtn">Preview Questions</button><button class="success" id="saveExamBtn">Save Exam</button><div id="previewBox"></div>
+</div>
+</section>
+<section class="card"><h2>System Status</h2><div class="stats"><div><b id="instCount">0</b><span>Institutes</span></div><div><b id="examCount">0</b><span>Exams</span></div><div><b>250</b><span>Questions / Exam</span></div></div></section>
+</section>
+</main>
+<script type="module" src="admin.js?v=phase1"></script>
+</body></html>

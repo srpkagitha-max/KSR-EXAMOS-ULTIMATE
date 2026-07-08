@@ -1,0 +1,1 @@
+# KSR ExamOS Ultimate - Phase 1 Foundation\n\nClean project. No service worker cache. Upload all files to GitHub root.\n
