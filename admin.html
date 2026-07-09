@@ -1,11 +1,35 @@
-<!DOCTYPE html><html lang="te"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KSR ExamOS Ultimate - Admin</title><link rel="stylesheet" href="style.css?v=phase5stable"></head><body>
-<header class="hero"><div><h1>KSR ExamOS Ultimate</h1><p>Admin Portal • Phase-5 Stable</p></div><a class="hero-btn" href="index.html">Student</a></header>
+<!DOCTYPE html><html lang="te"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KSR ExamOS Ultimate - Admin</title><link rel="stylesheet" href="style.css?v=phase6qbank"></head><body>
+<header class="hero"><div><h1>KSR ExamOS Ultimate</h1><p>Admin Portal • Phase-6 Question Bank</p></div><a class="hero-btn" href="index.html">Student</a></header>
 <main class="container"><section id="loginCard" class="card"><h2>Admin Login</h2><label>Email</label><input id="adminEmail" placeholder="admin@example.com"><label>Password</label><input id="adminPassword" type="password" placeholder="password"><button class="primary" id="loginBtn">Login</button><p id="loginMsg"></p><div class="note">Demo mode enabled.</div></section>
-<section id="dashboard" class="hidden"><section class="card top"><div><h2>Super Admin Dashboard</h2><span class="badge">Phase-5 Stable</span></div><button class="danger" id="logoutBtn">Logout</button></section>
+<section id="dashboard" class="hidden"><section class="card top"><div><h2>Super Admin Dashboard</h2><span class="badge">Phase-6 Question Bank</span></div><button class="danger" id="logoutBtn">Logout</button></section>
 <section class="stats card"><div><b id="instCount">0</b><span>Institutes</span></div><div><b id="examCount">0</b><span>Exams</span></div><div><b id="attemptCount">0</b><span>Attempts</span></div><div><b id="resultCount">0</b><span>Results</span></div></section>
 <section class="grid"><div class="card"><h2>1. Institute Management</h2><label>Institute ID</label><input id="instituteId" placeholder="KSR001"><label>Institute Name</label><input id="instituteName" placeholder="KSR Academy"><label>Institute Type</label><input id="instituteType" placeholder="Coaching / School / College"><label>Admin Email</label><input id="instituteAdminEmail" placeholder="admin@example.com"><label>Contact</label><input id="instituteContact" placeholder="Phone"><button class="primary" id="saveInstituteBtn">Save Institute</button><button id="loadInstitutesBtn">Load Institutes</button><div id="institutesList"></div></div>
 <div class="card"><h2>2. Exam Create</h2><label>Institute ID</label><input id="examInstituteId" placeholder="KSR001"><label>Exam ID</label><input id="examId" placeholder="DSC001"><label>Exam Title</label><input id="examTitleInput" placeholder="DSC Grand Test"><label>Category</label><input id="examCategory" placeholder="DSC / SI / BANK / RRB"><div class="grid-small"><div><label>Time Minutes</label><input id="examMinutes" type="number" value="60"></div><div><label>Marks / Question</label><input id="marksPerQ" type="number" value="1"></div></div><div class="grid-small"><div><label>Negative Marking</label><select id="negativeOn"><option value="off">OFF</option><option value="on">ON</option></select></div><div><label>Negative / Wrong</label><input id="negativeMark" type="number" step="0.01" value="0.25"></div></div><div class="grid-small"><div><label>Random Questions</label><select id="randomQuestions"><option value="off">OFF</option><option value="on">ON</option></select></div><div><label>Random Options</label><select id="randomOptions"><option value="off">OFF</option><option value="on">ON</option></select></div></div><label>Questions Paste Area</label><textarea id="questionsText" placeholder="1. Question text&#10;A) Option&#10;B) Option ●&#10;C) Option&#10;D) Option"></textarea><button class="primary" id="previewBtn">Preview Questions</button><button class="success" id="saveExamBtn">Save Exam</button><div id="previewBox"></div></div></section>
 <section class="card"><h2>3. Exams List</h2><div class="row"><input id="filterInstituteId" placeholder="Filter by Institute ID"><button id="loadExamsBtn">Load Exams</button></div><div id="examsList"></div></section>
 <section class="grid"><div class="card"><h2>4. Hall Ticket Generator</h2><input id="ticketInstituteId" placeholder="Institute ID"><input id="ticketExamId" placeholder="Exam ID"><input id="ticketName" placeholder="Student Name"><input id="ticketPhone" placeholder="Phone"><input id="ticketPhoto" placeholder="Photo URL optional"><button class="primary" id="makeTicketBtn">Generate Hall Ticket</button><div id="ticketBox"></div></div><div class="card"><h2>5. Live Monitor</h2><button id="loadLiveBtn">Load Live Attempts</button><div id="liveBox"></div></div></section>
 <section class="grid"><div class="card"><h2>6. Results</h2><button id="loadResultsBtn">Load Results</button><div id="resultsList"></div></div><div class="card"><h2>7. Leaderboard</h2><input id="leaderExamId" placeholder="Exam ID"><button id="loadLeaderBtn">Load Leaderboard</button><div id="leaderBox"></div></div></section>
-</section></main><script type="module" src="admin.js?v=phase5stable"></script></body></html>
+
+<section class="card">
+<h2>8. Question Bank</h2>
+<div class="grid-small">
+  <div><label>Category</label><input id="qbCategory" placeholder="DSC / SI / BANK"></div>
+  <div><label>Subject</label><input id="qbSubject" placeholder="EVS / GK / Telugu"></div>
+</div>
+<div class="grid-small">
+  <div><label>Chapter</label><input id="qbChapter" placeholder="Chapter"></div>
+  <div><label>Topic</label><input id="qbTopic" placeholder="Topic"></div>
+</div>
+<div class="grid-small">
+  <div><label>Difficulty</label><select id="qbDifficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+  <div><label>Tags</label><input id="qbTags" placeholder="roots, plants, evs"></div>
+</div>
+<label>Question</label><textarea id="qbQuestion" placeholder="Question text"></textarea>
+<div class="grid-small"><div><label>A</label><input id="qbA"></div><div><label>B</label><input id="qbB"></div></div>
+<div class="grid-small"><div><label>C</label><input id="qbC"></div><div><label>D</label><input id="qbD"></div></div>
+<label>Correct Answer</label><select id="qbAns"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+<button class="primary" id="saveQbBtn">Save Question</button>
+<button id="loadQbBtn">Load Question Bank</button>
+<button class="success" id="addQbToExamBtn">Add Selected to Exam Paste Area</button>
+<div id="qbankBox"></div>
+</section>
+</section></main><script type="module" src="admin.js?v=phase6qbank"></script></body></html>

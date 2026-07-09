@@ -10,3 +10,90 @@ $("loadLiveBtn").onclick=loadLive;async function loadLive(){const snap=await get
 $("loadResultsBtn").onclick=loadResults;async function loadResults(){const snap=await getDocs(collection(db,"results"));$("resultsList").innerHTML=[...snap.docs].slice(-50).reverse().map(d=>{const x=d.data();return `<div class="qcard"><b>${esc(x.studentName||"Student")}</b><br>${esc(x.examId||"")} - ${esc(x.instituteId||"")}<br><span class="pill">${x.score}/${x.total}</span><span class="pill">${x.percent||0}%</span><span class="pill">Correct ${x.correct||0}</span><span class="pill">Wrong ${x.wrong||0}</span></div>`}).join("")||"<div class='note'>No results found</div>";refreshStats()}
 $("loadLeaderBtn").onclick=loadLeader;async function loadLeader(){const eid=safe($("leaderExamId").value),snap=await getDocs(collection(db,"results"));let arr=[...snap.docs].map(d=>d.data()).filter(x=>!eid||safe(x.examId)===eid);arr.sort((a,b)=>Number(b.score||0)-Number(a.score||0));$("leaderBox").innerHTML=arr.slice(0,50).map((x,i)=>`<div class="qcard"><b>Rank ${i+1}</b> - ${esc(x.studentName||"Student")}<br><span class="pill">${x.score}/${x.total}</span><span class="pill">${x.percent||0}%</span><span class="pill">${esc(x.examId||"")}</span></div>`).join("")||"<div class='note'>No leaderboard data</div>"}
 async function refreshStats(){try{const inst=await getDocs(collection(db,"institutes")),exams=await getDocs(collection(db,"exams")),attempts=await getDocs(collection(db,"attempts")),results=await getDocs(collection(db,"results"));$("instCount").textContent=inst.size;$("examCount").textContent=exams.size;$("attemptCount").textContent=attempts.size;$("resultCount").textContent=results.size}catch(e){}}
+
+// ===== Phase-6 Question Bank Base =====
+window.KSR_QB_SELECTED = [];
+window.KSR_QBANK_CACHE = [];
+
+function qbVal(id){ return document.getElementById(id)?.value || ""; }
+function qbEsc(v){ return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+const saveQbBtn = document.getElementById("saveQbBtn");
+if(saveQbBtn){
+  saveQbBtn.onclick = async () => {
+    const q = qbVal("qbQuestion").trim();
+    if(!q) return alert("Question required");
+    const id = "QB_" + Date.now();
+    const data = {
+      id,
+      category: qbVal("qbCategory"),
+      subject: qbVal("qbSubject"),
+      chapter: qbVal("qbChapter"),
+      topic: qbVal("qbTopic"),
+      difficulty: qbVal("qbDifficulty"),
+      tags: qbVal("qbTags").split(",").map(x=>x.trim()).filter(Boolean),
+      q,
+      o: [qbVal("qbA"), qbVal("qbB"), qbVal("qbC"), qbVal("qbD")],
+      a: "ABCD".indexOf(qbVal("qbAns")),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    await setDoc(doc(db,"questionBank",id), data, {merge:true});
+    alert("Question saved to Question Bank");
+    loadQBank();
+  };
+}
+
+const loadQbBtn = document.getElementById("loadQbBtn");
+if(loadQbBtn){ loadQbBtn.onclick = loadQBank; }
+
+async function loadQBank(){
+  const box = document.getElementById("qbankBox");
+  if(!box) return;
+  const snap = await getDocs(collection(db,"questionBank"));
+  const docs = [...snap.docs].map(d=>d.data()).reverse();
+  window.KSR_QBANK_CACHE = docs;
+  window.KSR_QB_SELECTED = [];
+  box.innerHTML = docs.slice(0,100).map((x,i)=>`
+    <div class="qcard qbank-item" id="qbitem${i}" onclick="window.toggleQb(${i})">
+      <b>${qbEsc(x.subject||"General")}</b>
+      <span class="pill">${qbEsc(x.category||"")}</span>
+      <span class="pill">${qbEsc(x.difficulty||"")}</span>
+      <br>${qbEsc(x.q||"").slice(0,180)}
+      <br><span class="small">${qbEsc(x.chapter||"")} / ${qbEsc(x.topic||"")}</span>
+    </div>
+  `).join("") || "<div class='note'>No questions in bank</div>";
+}
+
+window.toggleQb = function(i){
+  const arr = window.KSR_QBANK_CACHE || [];
+  const q = arr[i];
+  if(!q) return;
+  const pos = window.KSR_QB_SELECTED.findIndex(x=>x.id===q.id);
+  const el = document.getElementById("qbitem"+i);
+  if(pos>=0){
+    window.KSR_QB_SELECTED.splice(pos,1);
+    el?.classList.remove("selected");
+  }else{
+    window.KSR_QB_SELECTED.push(q);
+    el?.classList.add("selected");
+  }
+};
+
+const addQbToExamBtn = document.getElementById("addQbToExamBtn");
+if(addQbToExamBtn){
+  addQbToExamBtn.onclick = () => {
+    const selected = window.KSR_QB_SELECTED || [];
+    if(!selected.length) return alert("Select questions from Question Bank");
+    const startNo = (document.getElementById("questionsText").value.match(/(?:^|\n)\s*\d+[\.)]/g)||[]).length;
+    const text = selected.map((q,i)=>`${startNo+i+1}. ${q.q}
+A. ${q.o?.[0]||""}
+B. ${q.o?.[1]||""}
+C. ${q.o?.[2]||""}
+D. ${q.o?.[3]||""}
+Answer: ${"ABCD"[Number(q.a)||0]}`).join("\n\n");
+    const area = document.getElementById("questionsText");
+    area.value = area.value.trim() ? area.value.trim() + "\n\n" + text : text;
+    alert(selected.length + " questions added to exam paste area");
+  };
+}
