@@ -1,11 +1,10 @@
-# KSR ExamOS Ultimate - Phase 6 Question Bank Base
+# KSR ExamOS Ultimate - Phase 6.1 Question Bank Pro
 
 Added:
-- Question Bank section
-- Category / Subject / Chapter / Topic
-- Difficulty and Tags
-- Save question to Firestore questionBank
-- Load question bank
-- Select questions and add to exam paste area
+- Question Bank search
+- Filters by category, subject, difficulty
+- Bulk select questions
+- Add selected questions to exam paste area
+- Selected count
 
-Open with: admin.html?v=phase6qbank
+Open with: admin.html?v=phase61qbankpro

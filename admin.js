@@ -97,3 +97,120 @@ Answer: ${"ABCD"[Number(q.a)||0]}`).join("\n\n");
     alert(selected.length + " questions added to exam paste area");
   };
 }
+
+
+// ===== Phase-6.1 Question Bank Pro Override =====
+window.KSR_QB_SELECTED = [];
+window.KSR_QBANK_CACHE = [];
+
+function qbVal(id){ return document.getElementById(id)?.value || ""; }
+function qbEsc(v){ return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+function qbUpdateStats(){
+  const s=document.getElementById("qbankStats");
+  if(s) s.textContent = "Selected: " + (window.KSR_QB_SELECTED||[]).length;
+}
+
+const saveQbBtn2 = document.getElementById("saveQbBtn");
+if(saveQbBtn2){
+  saveQbBtn2.onclick = async () => {
+    const q = qbVal("qbQuestion").trim();
+    if(!q) return alert("Question required");
+    const id = "QB_" + Date.now();
+    const data = {
+      id,
+      category: qbVal("qbCategory").trim(),
+      subject: qbVal("qbSubject").trim(),
+      chapter: qbVal("qbChapter").trim(),
+      topic: qbVal("qbTopic").trim(),
+      difficulty: qbVal("qbDifficulty"),
+      tags: qbVal("qbTags").split(",").map(x=>x.trim()).filter(Boolean),
+      q,
+      o: [qbVal("qbA"), qbVal("qbB"), qbVal("qbC"), qbVal("qbD")],
+      a: "ABCD".indexOf(qbVal("qbAns")),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    await setDoc(doc(db,"questionBank",id), data, {merge:true});
+    alert("Question saved to Question Bank");
+    loadQBankPro();
+  };
+}
+
+function qbMatches(x){
+  const key = qbVal("qbSearch").toLowerCase().trim();
+  const cat = qbVal("qbFilterCategory").toLowerCase().trim();
+  const sub = qbVal("qbFilterSubject").toLowerCase().trim();
+  const diff = qbVal("qbFilterDifficulty").toLowerCase().trim();
+  const text = [x.q,x.category,x.subject,x.chapter,x.topic,(x.tags||[]).join(" ")].join(" ").toLowerCase();
+  if(key && !text.includes(key)) return false;
+  if(cat && String(x.category||"").toLowerCase().trim() !== cat) return false;
+  if(sub && String(x.subject||"").toLowerCase().trim() !== sub) return false;
+  if(diff && String(x.difficulty||"").toLowerCase().trim() !== diff) return false;
+  return true;
+}
+
+async function loadQBankPro(){
+  const box = document.getElementById("qbankBox");
+  if(!box) return;
+  const snap = await getDocs(collection(db,"questionBank"));
+  let docs = [...snap.docs].map(d=>d.data()).reverse().filter(qbMatches);
+  window.KSR_QBANK_CACHE = docs;
+  window.KSR_QB_SELECTED = [];
+  qbUpdateStats();
+  box.innerHTML = `<div class="note">Showing ${docs.length} questions</div>` + (docs.slice(0,200).map((x,i)=>`
+    <div class="qcard qbank-item" id="qbitem${i}" onclick="window.toggleQbPro(${i})">
+      <b>${qbEsc(x.subject||"General")}</b>
+      <span class="pill">${qbEsc(x.category||"")}</span>
+      <span class="pill">${qbEsc(x.difficulty||"")}</span>
+      <span class="pill">${qbEsc(x.chapter||"")}</span>
+      <br>${qbEsc(x.q||"").slice(0,220)}
+      <br><span class="small">${qbEsc(x.topic||"")} • ${(x.tags||[]).map(qbEsc).join(", ")}</span>
+    </div>
+  `).join("") || "<div class='note'>No matching questions</div>");
+}
+
+window.toggleQbPro = function(i){
+  const arr = window.KSR_QBANK_CACHE || [];
+  const q = arr[i];
+  if(!q) return;
+  const pos = window.KSR_QB_SELECTED.findIndex(x=>x.id===q.id);
+  const el = document.getElementById("qbitem"+i);
+  if(pos>=0){
+    window.KSR_QB_SELECTED.splice(pos,1);
+    el?.classList.remove("selected");
+  }else{
+    window.KSR_QB_SELECTED.push(q);
+    el?.classList.add("selected");
+  }
+  qbUpdateStats();
+};
+
+const loadQbBtn2 = document.getElementById("loadQbBtn");
+if(loadQbBtn2){ loadQbBtn2.onclick = loadQBankPro; }
+
+const clearQbSelectionBtn = document.getElementById("clearQbSelectionBtn");
+if(clearQbSelectionBtn){
+  clearQbSelectionBtn.onclick = () => {
+    window.KSR_QB_SELECTED = [];
+    document.querySelectorAll(".qbank-item").forEach(x=>x.classList.remove("selected"));
+    qbUpdateStats();
+  };
+}
+
+const addQbToExamBtn2 = document.getElementById("addQbToExamBtn");
+if(addQbToExamBtn2){
+  addQbToExamBtn2.onclick = () => {
+    const selected = window.KSR_QB_SELECTED || [];
+    if(!selected.length) return alert("Select questions from Question Bank");
+    const area = document.getElementById("questionsText");
+    const startNo = (area.value.match(/(?:^|\n)\s*\d+[\.)]/g)||[]).length;
+    const text = selected.map((q,i)=>`${startNo+i+1}. ${q.q}
+A. ${q.o?.[0]||""}
+B. ${q.o?.[1]||""}
+C. ${q.o?.[2]||""}
+D. ${q.o?.[3]||""}
+Answer: ${"ABCD"[Number(q.a)||0]}`).join("\n\n");
+    area.value = area.value.trim() ? area.value.trim() + "\n\n" + text : text;
+    alert(selected.length + " questions added to exam paste area");
+  };
+}
