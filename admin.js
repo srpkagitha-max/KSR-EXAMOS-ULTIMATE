@@ -1,4 +1,54 @@
-import { auth, db } from './firebase-config.js';import { signInWithEmailAndPassword,signOut,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";import { doc,setDoc,getDocs,collection,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";import { parseQuestions,expectedCount } from './modules/parser.js';
+import { auth, db } from './firebase-config.js';import { signInWithEmailAndPassword,signOut,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";import { doc,setDoc,getDocs,collection,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+// ===== Embedded Parser Fallback - Phase 6.1.2 =====
+function parseQuestions(rawText,limit=250){
+ const text=normalizeParser(rawText), blocks=splitByQuestionNumberParser(text), questions=[]; let subject="General";
+ for(const lines of blocks){
+  const usable=[];
+  for(const line of lines){
+   const clean=line.replace(/\*/g,"").trim();
+   if(/^(EVS|GK|DSC|TET|BANK|RRB|SI|PC|GROUPS|SSC|NEET|JEE|Psychology|Telugu|English|Maths|Science|Social|Methods)$/i.test(clean)){subject=clean;continue}
+   usable.push(line)
+  }
+  const q=parseBlockParser(usable,subject);
+  if(q)questions.push(q)
+ }
+ return questions.slice(0,limit)
+}
+function normalizeParser(raw){
+ let t=String(raw||"").replace(/\r/g,"\n");
+ t=t.replace(/జవాబు\s*[:：\-]?\s*/gi,"\nAnswer: ").replace(/సమాధానం\s*[:：\-]?\s*/gi,"\nAnswer: ").replace(/Ans(?:wer)?\s*[:：\-]?\s*/gi,"\nAnswer: ").replace(/Answer\s*[:：\-]?\s*/gi,"\nAnswer: ");
+ t=t.replace(/(^|\n)\s*Q\s*(\d+)\s*[\.)]?\s*/gi,(m,b,n)=>`${b}${n}. `);
+ t=t.replace(/(^|\n)\s*([ABCD])\s*[\):\-]\s*/gi,(m,b,a)=>`${b}${a.toUpperCase()}. `);
+ return t.replace(/\n{3,}/g,"\n\n").trim()
+}
+function splitByQuestionNumberParser(text){
+ const lines=text.split("\n").map(x=>x.trim()).filter(Boolean),blocks=[];let cur=[];
+ for(const line of lines){if(/^\d+\s*[\.)]\s+/.test(line)){if(cur.length)blocks.push(cur);cur=[line]}else cur.push(line)}
+ if(cur.length)blocks.push(cur);return blocks
+}
+function parseBlockParser(lines,subject){
+ if(!lines.length)return null;let text=lines.join("\n").trim(),answer=null;
+ const am=text.match(/Answer\s*[:：]?\s*([ABCD])/i);if(am)answer="ABCD".indexOf(am[1].toUpperCase());
+ text=text.replace(/^Answer\s*[:：]?\s*[ABCD].*$/gim,"").trim();
+ const re=/^\s*([ABCD])\s*[\.)]\s*(.*)$/gmi,m=[...text.matchAll(re)];
+ if(m.length<2)return null;
+ const opts=["","","",""],first=m[0].index??0;
+ for(let i=0;i<m.length;i++){
+  const mt=m[i],idx="ABCD".indexOf(mt[1].toUpperCase());
+  const start=(mt.index??0)+mt[0].length-(mt[2]||"").length;
+  const end=i+1<m.length?(m[i+1].index??text.length):text.length;
+  let val=text.slice(start,end).trim();
+  if(answer===null&&/[●⚫✔✓✅*]/.test(val))answer=idx;
+  opts[idx]=val.replace(/[●⚫✔✓✅*]/g,"").trim()
+ }
+ let q=text.slice(0,first).trim().replace(/^\d+\s*[\.)]\s*/,"").trim();
+ if(!q)return null;
+ return{q:formatStatementsParser(q),o:opts.map((x,i)=>x||`Option ${"ABCD"[i]}`),a:answer===null?0:answer,subject}
+}
+function formatStatementsParser(q){return String(q||"").replace(/\s+(I{1,3}|IV|V)\.\s+/g,"\n$1. ").replace(/\s*(\([ivxlcdm]+\)|[ivxlcdm]+\.)\s*/gi,"\n$1 ").replace(/\n{2,}/g,"\n").trim()}
+function expectedCount(raw){const nums=[...normalizeParser(raw).matchAll(/(?:^|\n)\s*(\d+)\s*[\.)]\s+/g)].map(m=>Number(m[1])).filter(n=>n>0&&n<=500);return nums.length?Math.max(...nums):0}
+
 const $=id=>document.getElementById(id),safe=v=>String(v||"").trim().toUpperCase().replace(/[^A-Z0-9_-]/g,""),esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 $("loginBtn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("adminEmail").value,$("adminPassword").value);showDashboard()}catch(e){$("loginMsg").textContent="Demo login enabled";showDashboard()}};$("logoutBtn").onclick=async()=>{try{await signOut(auth)}catch(e){}$("dashboard").classList.add("hidden");$("loginCard").classList.remove("hidden")};onAuthStateChanged(auth,u=>{if(u)showDashboard()});function showDashboard(){$("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");refreshStats();loadExams()}
 $("saveInstituteBtn").onclick=async()=>{const id=safe($("instituteId").value);if(!id)return alert("Institute ID required");await setDoc(doc(db,"institutes",id),{id,name:$("instituteName").value,type:$("instituteType").value,adminEmail:$("instituteAdminEmail").value,contact:$("instituteContact").value,status:"active",createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});alert("Institute saved");refreshStats();loadInstitutes()};$("loadInstitutesBtn").onclick=loadInstitutes;async function loadInstitutes(){const snap=await getDocs(collection(db,"institutes"));$("institutesList").innerHTML=[...snap.docs].map(d=>{const x=d.data();return `<div class="qcard"><b>${esc(x.id)}</b> <span class="pill">${esc(x.type||"Institute")}</span><br>${esc(x.name||"")}<br>${esc(x.adminEmail||"")}<br>${esc(x.contact||"")}</div>`}).join("")}

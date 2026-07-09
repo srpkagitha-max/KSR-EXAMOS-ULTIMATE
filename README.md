@@ -1,10 +1,9 @@
-# KSR ExamOS Ultimate - Phase 6.1 Question Bank Pro
+# KSR ExamOS Ultimate - Phase 6.1.2 Login Fix
 
-Added:
-- Question Bank search
-- Filters by category, subject, difficulty
-- Bulk select questions
-- Add selected questions to exam paste area
-- Selected count
+Fix:
+- Admin login button issue fixed
+- Admin parser fallback embedded in admin.js
+- Question Bank Pro kept
 
-Open with: admin.html?v=phase61qbankpro
+Upload all files to GitHub root.
+Open: admin.html?v=phase612loginfix
