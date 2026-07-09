@@ -1,0 +1,7 @@
+import {auth,db} from '../core/firebase.js';import {signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';import {collection,getDocs} from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';import {$,show,hide,text} from '../shared/dom.js';import {friendlyError} from '../shared/errors.js';
+function openDashboard(){hide('loginCard');show('dashboard');text('loginMsg','')}
+function openLogin(){show('loginCard');hide('dashboard')}
+async function login(){const email=$('adminEmail').value.trim(),pass=$('adminPassword').value;text('loginMsg','Checking...');try{if(email&&pass){await signInWithEmailAndPassword(auth,email,pass);text('loginMsg','Login success')}else{text('loginMsg','Demo login opened');openDashboard()}}catch(e){text('loginMsg','Demo fallback: '+friendlyError(e));openDashboard()}}
+async function logout(){try{await signOut(auth)}catch(e){}openLogin()}
+async function testFirebase(){text('testMsg','Testing...');try{await getDocs(collection(db,'institutes'));text('testMsg','Firebase connection OK');text('firebaseStatus','OK')}catch(e){text('testMsg',friendlyError(e));text('firebaseStatus','Check')}}
+$('loginBtn').addEventListener('click',login);$('logoutBtn').addEventListener('click',logout);$('testFirebaseBtn').addEventListener('click',testFirebase);onAuthStateChanged(auth,u=>{if(u)openDashboard()});

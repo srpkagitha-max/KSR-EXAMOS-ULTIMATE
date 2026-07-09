@@ -1,0 +1,1 @@
+export function friendlyError(e){const m=String(e?.message||e||'Unknown error');if(m.includes('invalid-credential'))return'Invalid email or password';if(m.includes('permission-denied'))return'Firebase permission denied';return m;}

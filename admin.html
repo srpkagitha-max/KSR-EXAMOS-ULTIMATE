@@ -1,54 +1,6 @@
-<!DOCTYPE html><html lang="te"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KSR ExamOS Ultimate - Admin</title><link rel="stylesheet" href="style.css?v=phase612loginfix"></head><body>
-<header class="hero"><div><h1>KSR ExamOS Ultimate</h1><p>Admin Portal • Phase-6.1.2.1 Question Bank Pro</p></div><a class="hero-btn" href="index.html">Student</a></header>
-<main class="container"><section id="loginCard" class="card"><h2>Admin Login</h2><label>Email</label><input id="adminEmail" placeholder="admin@example.com"><label>Password</label><input id="adminPassword" type="password" placeholder="password"><button class="primary" id="loginBtn">Login</button><p id="loginMsg"></p><div class="note">Demo mode enabled.</div></section>
-<section id="dashboard" class="hidden"><section class="card top"><div><h2>Super Admin Dashboard</h2><span class="badge">Phase-6.1.2.1 Question Bank Pro</span></div><button class="danger" id="logoutBtn">Logout</button></section>
-<section class="stats card"><div><b id="instCount">0</b><span>Institutes</span></div><div><b id="examCount">0</b><span>Exams</span></div><div><b id="attemptCount">0</b><span>Attempts</span></div><div><b id="resultCount">0</b><span>Results</span></div></section>
-<section class="grid"><div class="card"><h2>1. Institute Management</h2><label>Institute ID</label><input id="instituteId" placeholder="KSR001"><label>Institute Name</label><input id="instituteName" placeholder="KSR Academy"><label>Institute Type</label><input id="instituteType" placeholder="Coaching / School / College"><label>Admin Email</label><input id="instituteAdminEmail" placeholder="admin@example.com"><label>Contact</label><input id="instituteContact" placeholder="Phone"><button class="primary" id="saveInstituteBtn">Save Institute</button><button id="loadInstitutesBtn">Load Institutes</button><div id="institutesList"></div></div>
-<div class="card"><h2>2. Exam Create</h2><label>Institute ID</label><input id="examInstituteId" placeholder="KSR001"><label>Exam ID</label><input id="examId" placeholder="DSC001"><label>Exam Title</label><input id="examTitleInput" placeholder="DSC Grand Test"><label>Category</label><input id="examCategory" placeholder="DSC / SI / BANK / RRB"><div class="grid-small"><div><label>Time Minutes</label><input id="examMinutes" type="number" value="60"></div><div><label>Marks / Question</label><input id="marksPerQ" type="number" value="1"></div></div><div class="grid-small"><div><label>Negative Marking</label><select id="negativeOn"><option value="off">OFF</option><option value="on">ON</option></select></div><div><label>Negative / Wrong</label><input id="negativeMark" type="number" step="0.01" value="0.25"></div></div><div class="grid-small"><div><label>Random Questions</label><select id="randomQuestions"><option value="off">OFF</option><option value="on">ON</option></select></div><div><label>Random Options</label><select id="randomOptions"><option value="off">OFF</option><option value="on">ON</option></select></div></div><label>Questions Paste Area</label><textarea id="questionsText" placeholder="1. Question text&#10;A) Option&#10;B) Option ●&#10;C) Option&#10;D) Option"></textarea><button class="primary" id="previewBtn">Preview Questions</button><button class="success" id="saveExamBtn">Save Exam</button><div id="previewBox"></div></div></section>
-<section class="card"><h2>3. Exams List</h2><div class="row"><input id="filterInstituteId" placeholder="Filter by Institute ID"><button id="loadExamsBtn">Load Exams</button></div><div id="examsList"></div></section>
-<section class="grid"><div class="card"><h2>4. Hall Ticket Generator</h2><input id="ticketInstituteId" placeholder="Institute ID"><input id="ticketExamId" placeholder="Exam ID"><input id="ticketName" placeholder="Student Name"><input id="ticketPhone" placeholder="Phone"><input id="ticketPhoto" placeholder="Photo URL optional"><button class="primary" id="makeTicketBtn">Generate Hall Ticket</button><div id="ticketBox"></div></div><div class="card"><h2>5. Live Monitor</h2><button id="loadLiveBtn">Load Live Attempts</button><div id="liveBox"></div></div></section>
-<section class="grid"><div class="card"><h2>6. Results</h2><button id="loadResultsBtn">Load Results</button><div id="resultsList"></div></div><div class="card"><h2>7. Leaderboard</h2><input id="leaderExamId" placeholder="Exam ID"><button id="loadLeaderBtn">Load Leaderboard</button><div id="leaderBox"></div></div></section>
-
-
-<section class="card">
-<h2>8. Question Bank Pro</h2>
-
-<h3>Add / Save Question</h3>
-<div class="grid-small">
-  <div><label>Category</label><input id="qbCategory" placeholder="DSC / SI / BANK"></div>
-  <div><label>Subject</label><input id="qbSubject" placeholder="EVS / GK / Telugu"></div>
-</div>
-<div class="grid-small">
-  <div><label>Chapter</label><input id="qbChapter" placeholder="Chapter"></div>
-  <div><label>Topic</label><input id="qbTopic" placeholder="Topic"></div>
-</div>
-<div class="grid-small">
-  <div><label>Difficulty</label><select id="qbDifficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
-  <div><label>Tags</label><input id="qbTags" placeholder="roots, plants, evs"></div>
-</div>
-<label>Question</label><textarea id="qbQuestion" placeholder="Question text"></textarea>
-<div class="grid-small"><div><label>A</label><input id="qbA"></div><div><label>B</label><input id="qbB"></div></div>
-<div class="grid-small"><div><label>C</label><input id="qbC"></div><div><label>D</label><input id="qbD"></div></div>
-<label>Correct Answer</label><select id="qbAns"><option>A</option><option>B</option><option>C</option><option>D</option></select>
-<button class="primary" id="saveQbBtn">Save Question</button>
-
-<hr>
-<h3>Search / Filter Question Bank</h3>
-<div class="grid-small">
-  <div><label>Search Keyword</label><input id="qbSearch" placeholder="question keyword"></div>
-  <div><label>Filter Category</label><input id="qbFilterCategory" placeholder="DSC"></div>
-</div>
-<div class="grid-small">
-  <div><label>Filter Subject</label><input id="qbFilterSubject" placeholder="EVS"></div>
-  <div><label>Filter Difficulty</label><select id="qbFilterDifficulty"><option value="">All</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
-</div>
-<div class="row">
-  <button id="loadQbBtn">Load / Search Questions</button>
-  <button class="success" id="addQbToExamBtn">Add Selected to Exam Paste Area</button>
-  <button id="clearQbSelectionBtn">Clear Selection</button>
-</div>
-<div class="note" id="qbankStats">Selected: 0</div>
-<div id="qbankBox"></div>
-</section>
-
-</section></main><script type="module" src="admin.js?v=phase612loginfix"></script></body></html>
+<!DOCTYPE html><html lang="te"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KSR ExamOS v2 Admin</title><link rel="stylesheet" href="assets/css/style.css?v=v200core"></head><body>
+<header class="hero"><div><h1>KSR ExamOS Ultimate</h1><p>v2.0 Core Foundation • Admin</p></div><a class="hero-btn" href="index.html">Student</a></header>
+<main class="container">
+<section id="loginCard" class="card"><h2>Admin Login</h2><label>Email</label><input id="adminEmail" placeholder="admin@example.com"><label>Password</label><input id="adminPassword" type="password" placeholder="password"><button class="primary" id="loginBtn" type="button">Login</button><p id="loginMsg" class="msg"></p><div class="note">Demo fallback enabled: empty login tho kuda dashboard open avtundi.</div></section>
+<section id="dashboard" class="hidden"><section class="card top"><div><h2>Admin Dashboard</h2><span class="badge">v2.0 Core Stable</span></div><button class="danger" id="logoutBtn" type="button">Logout</button></section><section class="stats card"><div><b id="firebaseStatus">Ready</b><span>Firebase</span></div><div><b>v2.0</b><span>Version</span></div><div><b>Core</b><span>Foundation</span></div></section><section class="card"><h2>Core Test</h2><button id="testFirebaseBtn" type="button">Test Firebase Connection</button><p id="testMsg"></p></section></section>
+</main><script type="module" src="assets/js/admin/app.js?v=v200core"></script></body></html>

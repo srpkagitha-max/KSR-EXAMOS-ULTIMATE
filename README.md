@@ -1,9 +1,9 @@
-# KSR ExamOS Ultimate - Phase 6.1.2 Login Fix
+# KSR ExamOS Ultimate v2.0.0 Core Foundation
 
-Fix:
-- Admin login button issue fixed
-- Admin parser fallback embedded in admin.js
-- Question Bank Pro kept
+Clean rewrite. Old patch code ledu.
 
-Upload all files to GitHub root.
-Open: admin.html?v=phase612loginfix
+## Test
+Admin: admin.html?v=v200core
+Student: index.html?v=v200core
+
+Admin login demo: email/password empty ga Login click chesthe dashboard open avtundi.
